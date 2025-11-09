@@ -1,0 +1,19 @@
+def future_population():
+    df = pd.read_csv('./data/주요_인구지표_성비_인구성장률_인구구조_부양비_등_전국.csv', encoding='utf-8')
+    df.rename(columns={'인구구조,부양비별': '인구구조'}, inplace=True)
+    df = df.query('인구구조 == "총인구(명)"')
+    df.drop(columns='가정별', inplace=True)
+    df = df.T
+    df = df.reset_index()
+    df.columns = ['년도', '인구수']
+    df = df[df['년도'] != '인구구조']
+
+    fig = px.line(
+        df, 
+        x='년도', 
+        y='인구수', 
+        title='미래 인구수 변화 예측',
+        labels={'년도': '년도', '인구수': '인구수 (명)'} 
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
