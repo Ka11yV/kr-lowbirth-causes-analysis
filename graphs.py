@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go # fig.add_hline을 위해 필요
 
@@ -99,7 +100,6 @@ def senior_pie():
             '청년': custom_colors['청년'],
             '노인 인구': custom_colors['노인'] # 데이터프레임의 실제 값은 '노인 인구'입니다.
         },
-        hole=0.4 # 도넛 차트 형태로 변경
     )
 
     fig.update_traces(
@@ -108,7 +108,7 @@ def senior_pie():
         textinfo='percent+label', 
         
         # 도넛 차트 형태로 변경 (0.0에서 1.0 사이 값, 0.5가 일반적)
-        hole=0.5, 
+        hole=0.3, 
         
         pull=[0, 0, 0, 0] 
     )
@@ -234,11 +234,8 @@ def convert_to_numeric(df, col) :
     
     return df
 
-
-def check_marriage_intention() :  # 향후 자녀 출산 의향
+def check_marriage_intention(category) :  # 향후 결혼 계획
     df = pd.read_csv('./data/향후_결혼_계획.csv', encoding = 'utf-8')
-
-    st.header("향후 결혼 계획")
 
     # .pipe(함수명, 추가 인수) : 이전 단계의 df를 함수의 첫 번째 인수로 전달, 나머지 인수를 순서대로 전달
     df = (
@@ -248,12 +245,7 @@ def check_marriage_intention() :  # 향후 자녀 출산 의향
         .pipe(convert_to_numeric, '없다 (%)')
     )
 
-    unique_group = df['분류'].unique().tolist()
-    category_selectbox = st.selectbox(
-        '분류',
-        unique_group,
-        key = 'check_marriage_intention_selectbox'
-    )
+    category_selectbox = category
 
     df = df.query('분류 == @category_selectbox')
     df_melt = pd.melt(
@@ -270,16 +262,13 @@ def check_marriage_intention() :  # 향후 자녀 출산 의향
         color = '하위분류', 
         barmode = 'group', 
         range_y = [20, 70],
-        title = '결혼 의향 백분율'
+        title = '향후 결혼 계획 백분율'
     )
 
     st.plotly_chart(chart, key = 'check_marriage_intention_chart')
-    st.dataframe(df, hide_index = True)
 
-def Intention_to_have_children_in_the_future() :  # 향후 자녀 출산 의향
+def Intention_to_have_children_in_the_future(category) :  # 향후 자녀 출산 의향
     df = pd.read_csv('./data/향후_자녀_출산_의향.csv', encoding = 'utf-8')
-
-    st.header("향후 자녀 출산 의향")
 
     # .pipe(함수명, 추가 인수) : 이전 단계의 df를 함수의 첫 번째 인수로 전달, 나머지 인수를 순서대로 전달
     df = (
@@ -289,12 +278,7 @@ def Intention_to_have_children_in_the_future() :  # 향후 자녀 출산 의향
         .pipe(convert_to_numeric, '없다 (%)')
     )
 
-    unique_group = df['분류'].unique().tolist()
-    category_selectbox = st.selectbox(
-        '분류',
-        unique_group,
-        key = 'Intention_to_have_children_in_the_future_selectbox'
-    )
+    category_selectbox = category
 
     df = df.query('분류 == @category_selectbox')
     df_melt = pd.melt(
@@ -311,17 +295,29 @@ def Intention_to_have_children_in_the_future() :  # 향후 자녀 출산 의향
         color = '하위분류', 
         barmode = 'group', 
         range_y = [20, 70],
-        title = '결혼 의향 백분율'
+        title = '향후 자녀 출산 의향 백분율'
     )
 
     st.plotly_chart(chart, key = 'Intention_to_have_children_in_the_future_chart')
-    st.dataframe(df, hide_index = True)
+
+def show_columns() :
+
+    category_selectbox = st.selectbox(
+        '분류',
+        ['전체', '성별', '연령별', '지역구분별', '학력별']
+    )
+
+    tab_check_marriage_intention, tab_Intention_to_have_children_in_the_future = st.columns([1, 1])
+
+    with tab_check_marriage_intention :
+        check_marriage_intention(category_selectbox)
+    with tab_Intention_to_have_children_in_the_future :
+        Intention_to_have_children_in_the_future(category_selectbox)
 
 
-def Attitudes_toward_Children_and_Child_Rearing() :
+def Attitudes_toward_Children_and_Child_Rearing() :  # 자녀와 자녀 양육에 대한 생각
     df = pd.read_csv('./data/자녀와_자녀_양육에_대한_생각.csv', encoding = 'utf-8', header = [1, 2])
 
-    st.subheader('자녀와 자녀 양육에 대한 생각')
 
     # .pipe(함수명, 추가 인수) : 이전 단계의 df를 함수의 첫 번째 인수로 전달, 나머지 인수를 순서대로 전달
     df = rename_df_columns(df)
@@ -340,6 +336,7 @@ def Attitudes_toward_Children_and_Child_Rearing() :
     df = convert_to_numeric(df, '전혀 그렇지 않다 (%)')
 
     unique_group_category = df['분류'].unique().tolist()
+    unique_group_category[7] = '지역구분별'
     category_selectbox = st.selectbox(
         '분류',
         unique_group_category,
@@ -348,25 +345,58 @@ def Attitudes_toward_Children_and_Child_Rearing() :
 
     df = df.query('분류 == @category_selectbox')
 
-
     unique_group_subCategory = df['하위분류'].unique().tolist()
     if category_selectbox != '전체' : 
-        subCategory_radio = st.radio(
-            '하위분류',
-            unique_group_subCategory,
-            key = 'check_marriage_intention_selectbox_subCategory'
-        )
+        if category_selectbox == '지역별' :
+            seoul_metropolitan_area_list = ['서울특별시', '인천광역시', '경기도']
+            
+            df['지역구분별'] = np.where(
+                df['하위분류'].isin(seoul_metropolitan_area_list),
+                '수도권',
+                '비수도권'
+            )
 
-        df = df.query('하위분류 == @subCategory_radio')
+            unique_group_subCategory = df['지역구분별'].unique().tolist()
+
+            subCategory_radio = st.radio(
+                '하위분류',
+                unique_group_subCategory,
+                key = 'check_marriage_intention_selectbox_subCategory'
+            )
+
+            df = df.query('지역구분별 == @subCategory_radio')
+
+            df_melt = pd.melt(
+                df,
+                id_vars = ['분류', '하위분류','지역구분별'],
+                var_name = 'scale',
+                value_name = '백분율(%)'
+            )
+
+        else :
+            subCategory_radio = st.radio(
+                '하위분류',
+                unique_group_subCategory,
+                key = 'check_marriage_intention_selectbox_subCategory'
+            )
+
+            df = df.query('하위분류 == @subCategory_radio')
+
+            df_melt = pd.melt(
+                df,
+                id_vars = ['분류', '하위분류'],
+                var_name = 'scale',
+                value_name = '백분율(%)'
+            )
     else : 
         subCategory_radio = '전체'
 
-    df_melt = pd.melt(
-        df,
-        id_vars = ['분류', '하위분류'],
-        var_name = 'scale',
-        value_name = '백분율(%)'
-    )
+        df_melt = pd.melt(
+            df,
+            id_vars = ['분류', '하위분류'],
+            var_name = 'scale',
+            value_name = '백분율(%)'
+        )
 
     pie_chart = px.pie(
         data_frame = df_melt, 
@@ -377,6 +407,4 @@ def Attitudes_toward_Children_and_Child_Rearing() :
     )
 
     st.plotly_chart(pie_chart)
-
-
 
