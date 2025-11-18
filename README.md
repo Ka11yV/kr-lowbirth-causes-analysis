@@ -4,15 +4,19 @@
 
 ## 1. 프로젝트 개요 및 분석 목표
 - **주요 분석 대상:** 합계출산율, 연령별 인구 구성비, 출산/결혼 의향, 사교육비 등
-- ** 기술스택 ** Python (Pandas, Plotly, Streamlit)
+- **기술스택** Python (Pandas, Plotly, Streamlit)
 
 
 ## Preview
-|   |   |
-|:--|:--|
-[![합계출산율 썸네일](/asstes/newplot.png)](/asstes/newplot.png)
-[![자녀&출산율 썸네일](/asstes/자녀출산.png)](/asstes/자녀출산.png)
-[![출산 포기 요인](/asstes/출산포기요인.png)](/asstes/출산포기요인.png)
+|   |
+|:--|
+[![합계출산율 썸네일](/asstes/newplot.png)](/asstes/newplot.png)|
+##### 대한민국의 합계출산율은 장기간 하락세를 보이며 이미 심각한 수준에 도달했습니다 
+[![자녀&출산율 썸네일](/asstes/자녀출산.png)](/asstes/자녀출산.png)|
+##### 저출산 현상은 미래 세대의 결혼 및 출산에 대한 인식 변화와 밀접하게 연결되어 있습니다.
+[![출산 포기 요인](/asstes/출산포기요인.png)](/asstes/출산포기요인.png)|
+### 출산 포기의 가장 큰 이유는 청년들의 경제적 어려움으로, 자녀 양육의 경제적 부담이 압도적인 1순위를 차지했습니다.
+
 
 
 
