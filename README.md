@@ -36,3 +36,7 @@
 | **인구 예측 (시계열)** | [대한민국 노인 인구 예측](https://kosis.kr/edu/visualStats/detail.do) |
 | **결혼/출산 의향 (설문)** | [향후 결혼 계획](https://kosis.kr/statHtml/statHtml.do?sso=ok&returnurl=https%3A%2F%2Fkosis.kr%3A443%2FstatHtml%2FstatHtml.do%3Fconn_path%3DI2%26tblId%3DDT_170002_G011%26orgId%3D170%26) 외 1건 |
 
+### 시연 영상
+![Image](https://github.com/user-attachments/assets/7d0c5da5-de64-4b92-b20b-4199b7549003)
+
+
